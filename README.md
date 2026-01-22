@@ -45,7 +45,6 @@ SAT-chatbot/
 │
 └── data-analysis/         # User study analysis scripts
     ├── analyze_sat_user_study.py      # Statistical analysis (ANOVA, permutation tests)
-    └── optimize_flag_assignments.py   # Group assignment optimization
 ```
 
 ## 🚀 Getting Started
@@ -69,15 +68,19 @@ npm install
 ```
 
 3. Configure environment variables:
-   - Copy `.env.development` or `.env.production` and update the API endpoint if needed
-   - By default, the frontend expects the backend at `http://localhost:8000`
+   - Create a `.env` file in the frontend directory (or copy from `.env.example`)
+   - Add the following:
+     ```
+     REACT_APP_BASE_URL=http://localhost:8000
+     ```
+   - Update the URL if your backend is running on a different host or port
 
 4. Start the development server:
 ```bash
 npm start
 ```
 
-The frontend will be available at `http://localhost:80` (or the port specified in package.json).
+The frontend will be available at `http://localhost:3000` (React's default port).
 
 ### Backend Setup
 
@@ -98,11 +101,12 @@ pip install -r requirements.txt
 ```
 
 4. Configure environment variables:
-   - Create a `.env` file based on the existing `.env` template
+   - Create a `.env` file in the backend directory (or copy from `.env.example`)
    - Add your OpenAI API key:
      ```
      OPENAI_API_KEY=your_api_key_here
      ```
+   - The `.env.example` file shows all available configuration options
 
 5. Run database migrations:
 ```bash
@@ -123,6 +127,8 @@ The backend API will be available at `http://localhost:8000`.
 
 ### Data Analysis Setup
 
+**Note:** The data analysis scripts require CSV files with user study data. These files are not included in the repository.
+
 1. Navigate to the data-analysis directory:
 ```bash
 cd data-analysis
@@ -130,16 +136,17 @@ cd data-analysis
 
 2. Install required Python packages:
 ```bash
-pip install numpy matplotlib scikit-learn pandas
+pip install -r requirements.txt
 ```
 
-3. Run analysis scripts:
+3. Prepare your data files:
+   - `SAT User Study (Responses) - Form Responses 1.csv` - Survey responses
+   - `email_username_group_flag.csv` - Email to group mapping
+
+4. Run analysis scripts:
 ```bash
 # For user study statistical analysis
 python analyze_sat_user_study.py
-
-# For group assignment optimization
-python optimize_flag_assignments.py
 ```
 
 ## 📊 Features
@@ -194,9 +201,9 @@ python optimize_flag_assignments.py
 
 ### Frontend Configuration
 
-Edit `frontend/.env.development` or `frontend/.env.production`:
+Create `frontend/.env` file:
 ```
-REACT_APP_API_URL=http://localhost:8000
+REACT_APP_BASE_URL=http://localhost:8000
 ```
 
 ### Backend Configuration
@@ -221,9 +228,15 @@ The backend uses Django REST Framework with JWT authentication. Key settings are
 
 - `POST /api/register/` - User registration
 - `POST /api/login/` - User authentication
-- `POST /api/chat/` - Send message to chatbot
-- `GET /api/messages/` - Retrieve chat history
-- `GET /api/user/` - Get current user information
+- `POST /api/message/` - Send message to chatbot (multi-agent mode)
+- `POST /api/simple-chat/` - Send message to simple chatbot
+- `POST /api/placebo-chat/` - Send message to placebo chatbot
+- `GET /api/chat-history/` - Retrieve chat history (requires authentication)
+- `GET /api/user-sessions/` - Get all session IDs for authenticated user
+- `POST /api/reset-state/` - Reset state machine for authenticated user
+- `POST /api/end-session/` - End current session
+- `POST /api/send-audio/` - Send audio file for transcription
+- `POST /api/process-buffered/` - Process buffered messages for authenticated user
 
 ### Authentication
 
@@ -277,19 +290,11 @@ This is a research project. If you'd like to contribute or adapt this code:
 
 This project is intended for research and educational purposes. Please cite the associated research paper if you use this code in your work.
 
-## 👥 Authors
-
-Algorithmic Human Development Research Group
-
 ## 🙏 Acknowledgments
 
 - OpenAI for GPT API
 - Django and React communities
 - All user study participants
-
-## 📧 Contact
-
-For questions or collaboration opportunities, please open an issue in this repository.
 
 ---
 
